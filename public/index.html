@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <title>Combat Board</title>
+    <style>
+      body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        margin: 0;
+        background: white;
+      }
+      canvas{
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      style="
+        position: absolute;
+        color: white;
+        padding: 8px;
+        font-family: sans-serif;
+        font-size: 14px;
+        user-select: none;
+        background: rgba(red, green, blue, 0.7);
+      "
+    >
+
+      </div>
+    </div>
+    <canvas></canvas>
+  </div>
+
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.2/gsap.min.js"
+    integrity="sha512-kVlGhj2qFy+KBCFuvjBJTGUMxbdqJKs4yK2jh0e0VPhWUPiPC87bzm4THmaaIee3Oj7j6sDpTTgm2EPPiESqBg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  <script src="./js/frontend.js"></script>
+</body>
+</html>
