@@ -9,12 +9,11 @@ const scoreEl = document.querySelector('#scoreEl');
 const linesX = 9;
 const linesY = 9;
 const devicePixelRatio = window.devicePixelRatio || 1;
-canvas.width = innerWidth * devicePixelRatio;
-canvas.height = innerHeight * devicePixelRatio;
+canvas.width = innerWidth;
+canvas.height = innerHeight;
 let mainReal;
 ctx.font = '20px Arial';
 
-// senin sırandayken karakterlerinin arkası belli renk olsun
 
 const BOX_IMG_1 = new Image();
 BOX_IMG_1.src = "BOX_1.jpeg";
@@ -34,14 +33,14 @@ const DRAGON_IMG_2 = new Image();
 DRAGON_IMG_2.src = "DRAGON_2.jpeg";
 
 socket.on("uWin", () => {
-  ctx.fillStyle = "black";
+  ctx.fillStyle = "green";
   ctx.font = "30px Arial";
   ctx.fillText("YOU WİN THE GAME", canvas.width / 2 - 155, canvas.height / 2.2);
   setTimeout(() => { window.location.href = "/"}, 2000);
   ctx.font = "20px Arial";
 });
 socket.on("uLost", () => {
-  ctx.fillStyle = "black";
+  ctx.fillStyle = "red";
   ctx.font = "30px Arial";
   ctx.fillText("YOU LOST THE GAME", canvas.width / 2 - 155, canvas.height / 2.2);
   setTimeout(() => { window.location.href = "/"}, 2000);
@@ -56,18 +55,21 @@ socket.on("FullServer", () => {
 });
 socket.on("lastSeconds", () => {
   ctx.font = "35px Arial";
+  ctx.fillStyle = "black";
   ctx.fillText("last 10 seconds", canvas.width / 2 - 125, canvas.height / 2.1);
   ctx.font = '20px Arial';
 });
 socket.on("UrTurn", () => {
   ctx.font = "35px Arial";
+  ctx.fillStyle = "orange";
   ctx.fillText("Your turn to play", canvas.width / 2 - 135, canvas.height / 2.5);
   ctx.font = '20px Arial';
+  ctx.fillStyle = "black";
 })
 
 socket.on("winMessageD", () => {
+  ctx.fillStyle = "green";
   ctx.font = "30px Arial";
-  ctx.fillStyle = "black";
   ctx.fillText("YOU WİN, ENEMY DISCONNECTED", canvas.width / 2 - 250, canvas.height / 2.2);
   setTimeout(() => { window.location.href = "/"}, 2000);
 });
@@ -137,7 +139,6 @@ function drawCharacter(x, y, condition){
     switch(condition){
       case 0:
         ctx.fillStyle = 'white';
-        //ctx.fillRect((x) * (canvas.width / linesX), (y) * (canvas.height / linesY), canvas.width / linesX, canvas.height / linesY);
         draw = false;
         break;
       case 1:
@@ -175,21 +176,19 @@ function drawCharacter(x, y, condition){
   }
 
   if(draw){
-    //ctx.fillRect(x * canvas.width / linesX + canvas.width / (linesX * 2) - 25, y * canvas.height / linesX + canvas.height/(linesX * 2) - 25, 50, 50);
-    
-
     if(number == 1 && mainReal){
+      ctx.fillStyle = "rgba(179, 185, 0, 1)";
+      const damage = mainReal[8-y][8-x]?.damage ?? 'N/A';
+      const health = mainReal[8-y][8-x]?.health ?? 'N/A';
+      ctx.fillText(`D: ${damage} H: ${health}`, x * canvas.width / linesX, y * canvas.height / linesX + 16);
       ctx.fillStyle = "black";
-      const damage = mainReal[8-y][8-x]?.damage ?? 'N/A'; // Use 'N/A' if damage is undefined
-      const health = mainReal[8-y][8-x]?.health ?? 'N/A'; // Use 'N/A' if health is undefined
-      ctx.fillText(`D: ${damage} H: ${health}`, x * canvas.width / linesX, y * canvas.height / linesX + 20);
     }
     else if(mainReal){
-
+      ctx.fillStyle = "rgba(179, 185, 0, 1)";
+      const damage = mainReal[y][x]?.damage ?? 'N/A';
+      const health = mainReal[y][x]?.health ?? 'N/A';
+      ctx.fillText(`D: ${damage} H: ${health}`, x * canvas.width / linesX, y * canvas.height / linesX + 16);
       ctx.fillStyle = "black";
-      const damage = mainReal[y][x]?.damage ?? 'N/A'; // Use 'N/A' if damage is undefined
-      const health = mainReal[y][x]?.health ?? 'N/A'; // Use 'N/A' if health is undefined
-      ctx.fillText(`D: ${damage} H: ${health}`, x * canvas.width / linesX, y * canvas.height / linesX + 20);
     }
   }
 }
@@ -200,11 +199,22 @@ socket.on('waitCommand', () => {
   ctx.font = "20px Arial";
 });
 
-socket.on('GameEndedMoves', () => {
- 
+socket.on('GameEndedMoves', (amount1, amount2) => {
   ctx.font = "30px Arial";
-  ctx.fillText("GAME ENDED, 50 MOVES WERE PLAYED WİTHOUT ATTACKİNG", canvas.width / 2 - 450, canvas.height / 2.2);
-  setTimeout(() => { window.location.href = "/"}, 2000);
+  if(amount1 > amount2){
+    ctx.fillStyle = "green";
+    ctx.fillText("YOU WIN", canvas.width / 2 - 85, canvas.height / 2 - 50);
+  }
+  else if(amount1 < amount2){
+    ctx.fillStyle = "red";
+    ctx.fillText("YOU LOST", canvas.width / 2 - 85, canvas.height / 2 - 50);
+  }
+  else{
+    ctx.fillStyle = "blue";
+    ctx.fillText("TIE", canvas.width / 2 - 25, canvas.height / 2 - 50);
+  }
+  ctx.fillText("GAME ENDED, 50 MOVES WERE PLAYED WITHOUT ATTACKING", canvas.width / 2 - 450, canvas.height / 2 - 150);
+  setTimeout(() => { window.location.href = "/"}, 2500);
 })
 
 
@@ -251,7 +261,6 @@ canvas.addEventListener('click', (e) =>{
         ctx.fillRect(lastClick[0] * (canvas.width / linesX), lastClick[1] * (canvas.height / linesY), canvas.width / linesX, canvas.height / linesY);
         drawCharacter(lastClick[0], lastClick[1], board[lastClick[1]][lastClick[0]]);
       }
-      //drawCharacter(xPosition, yPosition, board[yPosition][xPosition]);
       drawLines();
     }
     else{
@@ -261,7 +270,6 @@ canvas.addEventListener('click', (e) =>{
         ctx.fillRect(lastClick[0] * (canvas.width / linesX), lastClick[1] * (canvas.height / linesY), canvas.width / linesX, canvas.height / linesY);
         drawCharacter(lastClick[0], lastClick[1], board[linesY - lastClick[1] -1][linesX - lastClick[0] - 1]);
       }
-      //drawCharacter(xPosition, yPosition, board[linesY-yPosition-1][linesX - xPosition - 1]);
       drawLines();  
     }
     lastClick = [xPosition, yPosition];

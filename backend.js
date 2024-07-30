@@ -103,7 +103,7 @@ const connections = {
 
 let playerConnected = 0;
 io.on('connection', (socket) => {
-  if(playerConnected < 1000){
+  if(playerConnected < 250){
     playerConnected++;
     let intervalConditions = 0;
     let intervall;
@@ -195,7 +195,6 @@ io.on('connection', (socket) => {
     }
 
     function canMove1Block(firstX, firstY, secondX, secondY){
-      // for 1, 2, 6, 7
       let a = Math.abs(firstX - secondX);
       let b = Math.abs(firstY - secondY);
       if(a + b == 1){
@@ -226,20 +225,23 @@ io.on('connection', (socket) => {
                 clearTimeout(whosTurn[connections[socket.id].idI][0]);
                 if(values.length > connections[socket.id]?.idI){
                   whosTurn[connections[socket.id].idI][0] = setTimeout(() => {
-                    values[connections[socket.id].idI][1] += 1;
-                    values[connections[socket.id].idI][2] = 0;
-                    firstClick[0][0] = 0;
-                    firstClick[0][1] = 0;
-                    secondClick[0][0] = 0;
-                    secondClick[0][1] = 0;
-                    io.to(connectArr[connections[socket.id].idI][0]).emit('updateBoard', {frontendBoard: values[connections[socket.id].idI][0], cID: connectArr[connections[socket.id].idI], frontReal: values[connections[socket.id].idI][3]});
-                    io.to(connectArr[connections[socket.id].idI][1]).emit('updateBoard', {frontendBoard: values[connections[socket.id].idI][0], cID: connectArr[connections[socket.id].idI], frontReal: values[connections[socket.id].idI][3]});
-                    io.to(connectArr[connections[socket.id].idI][1]).emit('UrTurn');
-                    values[connections[socket.id].idI][4] = 1;
+                    if(connections[socket.id]){
+                      values[connections[socket.id].idI][1] += 1;
+                      values[connections[socket.id].idI][2] = 0;
+                      firstClick[0][0] = 0;
+                      firstClick[0][1] = 0;
+                      secondClick[0][0] = 0;
+                      secondClick[0][1] = 0;
+                      io.to(connectArr[connections[socket.id].idI][0]).emit('updateBoard', {frontendBoard: values[connections[socket.id].idI][0], cID: connectArr[connections[socket.id].idI], frontReal: values[connections[socket.id].idI][3]});
+                      io.to(connectArr[connections[socket.id].idI][1]).emit('updateBoard', {frontendBoard: values[connections[socket.id].idI][0], cID: connectArr[connections[socket.id].idI], frontReal: values[connections[socket.id].idI][3]});
+                      io.to(connectArr[connections[socket.id].idI][1]).emit('UrTurn');
+                      values[connections[socket.id].idI][4] = 1;
+                    }
+
                   }, 10000);
                 }
               }
-            },20000);
+            },15000);
             values[connections[socket.id].idI][4] = 3;
           }
           if(values[connections[socket.id]?.idI][4] == 1 && connectArr[connections[socket.id]?.idI][connections[socket.id]?.idJ] == socket.id){
@@ -250,26 +252,28 @@ io.on('connection', (socket) => {
                 clearTimeout(whosTurn[connections[socket.id].idI][1]);
                 if(values.length > connections[socket.id]?.idI && connections[socket.id]){
                   whosTurn[connections[socket.id].idI][1] = setTimeout(() => {
-                  values[connections[socket.id].idI][1] += 1;
-                  values[connections[socket.id].idI][2] = 0;
-                  firstClick[0][0] = 0;
-                  firstClick[0][1] = 0;
-                  secondClick[0][0] = 0;
-                  secondClick[0][1] = 0;
-                  values[connections[socket.id].idI][4] = 0;
-                  io.to(connectArr[connections[socket.id].idI][0]).emit('updateBoard', {frontendBoard: values[connections[socket.id].idI][0], cID: connectArr[connections[socket.id].idI], frontReal: values[connections[socket.id].idI][3]});
-                  io.to(connectArr[connections[socket.id].idI][1]).emit('updateBoard', {frontendBoard: values[connections[socket.id].idI][0], cID: connectArr[connections[socket.id].idI], frontReal: values[connections[socket.id].idI][3]});
-                  io.to(connectArr[connections[socket.id].idI][0]).emit('UrTurn');
+                  if(connections[socket.id]){
+                    values[connections[socket.id].idI][1] += 1;
+                    values[connections[socket.id].idI][2] = 0;
+                    firstClick[0][0] = 0;
+                    firstClick[0][1] = 0;
+                    secondClick[0][0] = 0;
+                    secondClick[0][1] = 0;
+                    values[connections[socket.id].idI][4] = 0;
+                    io.to(connectArr[connections[socket.id].idI][0]).emit('updateBoard', {frontendBoard: values[connections[socket.id].idI][0], cID: connectArr[connections[socket.id].idI], frontReal: values[connections[socket.id].idI][3]});
+                    io.to(connectArr[connections[socket.id].idI][1]).emit('updateBoard', {frontendBoard: values[connections[socket.id].idI][0], cID: connectArr[connections[socket.id].idI], frontReal: values[connections[socket.id].idI][3]});
+                    io.to(connectArr[connections[socket.id].idI][0]).emit('UrTurn'); 
+                  }
+
                   }, 10000);
-                  
                 }
               }
               
-            },20000);
+            },15000);
             values[connections[socket.id].idI][4] = 2;
           }
         }
-      }, 850);
+      }, 1000);
       let destroyCount = 0;
       socket.on('clickEvent', ({clickX, clickY, id}) => {
         if(connections[socket.id]?.idI >= 0){
@@ -397,9 +401,25 @@ io.on('connection', (socket) => {
                       clearTimeout(whosTurn[connections[socket.id].idI][connections[socket.id].idJ]);
                     }
                   }
+                  //değiştir
+                  //1422 width 653 height
                   if(values[connections[socket.id].idI][5] >= 50){
-                    io.to(connectArr[connections[socket.id].idI][0]).emit('GameEndedMoves');
-                    io.to(connectArr[connections[socket.id].idI][1]).emit('GameEndedMoves');
+                    let firstPlayerSum = 0;
+                    let secondPlayerSum = 0;
+                    values[connections[socket.id].idI][3].forEach(element => {
+                      element.forEach(valu => {
+                        if(valu.getSide() < 5){
+                          firstPlayerSum += valu.getSide();
+                        }
+                        else{
+                          secondPlayerSum += Math.abs(valu.getSide() - 5);
+                        }
+                      });
+                    });
+                    io.to(connectArr[connections[socket.id].idI][0]).emit('updateBoard', {frontendBoard: values[connections[socket.id].idI][0], cID: connectArr[connections[socket.id].idI], frontReal: values[connections[socket.id].idI][3]});
+                    io.to(connectArr[connections[socket.id].idI][1]).emit('updateBoard', {frontendBoard: values[connections[socket.id].idI][0], cID: connectArr[connections[socket.id].idI], frontReal: values[connections[socket.id].idI][3]});
+                    io.to(connectArr[connections[socket.id].idI][0]).emit('GameEndedMoves', secondPlayerSum, firstPlayerSum);
+                    io.to(connectArr[connections[socket.id].idI][1]).emit('GameEndedMoves', firstPlayerSum, secondPlayerSum);
                   }
                   if(destroyCount >= 11){
                     io.to(connectArr[connections[socket.id].idI][0]).emit('updateBoard', {frontendBoard: values[connections[socket.id].idI][0], cID: connectArr[connections[socket.id].idI], frontReal: values[connections[socket.id].idI][3]});
@@ -455,7 +475,6 @@ io.on('connection', (socket) => {
         }
       }
       else{
-        //burayı düzelt
         if(character == 7){
           let count = 0;
           let ay = scl[1] -1;
@@ -523,8 +542,6 @@ io.on('connection', (socket) => {
           }
         }
         
-        //sniper 2 li kouşulu eklemedin
-
     }
     return false;
   }

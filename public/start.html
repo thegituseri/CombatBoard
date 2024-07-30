@@ -14,7 +14,7 @@
             align-items: center;
         }
 
-        .paragraph-container {
+        #paragraph-container {
             margin-top: 12%;
             text-align: center;
         }
@@ -31,7 +31,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 50vh;
+            height: 45vh;
             margin-top: 6%;
         }
 
@@ -143,11 +143,20 @@
             border-width: 4px 0 0;
             background: none;
         }
+        #warnin{
+            display: none;
+            margin-top: 25px;
+            font-size: 20px;
+        }
     </style>
 </head>
 <body>
-    <div class="paragraph-container">
+    <div id="paragraph-container">
         <p>Please check out the game rules before playing</p>
+    </div>
+
+    <div>
+        <p id="warnin"></p>
     </div>
     <div class="buttonContainer">
         <button onclick="startGame()" class="button-1">Find New Game</button>
@@ -158,6 +167,15 @@
     <script>
         function startGame() {
             window.location.href = "/game";
+        }
+        if(window.innerHeight < 500 || window.innerWidth < 1000){
+            let warningDisplay = document.getElementById("warnin");
+            warningDisplay.style.display = "block";
+            warningDisplay.style.margin = "15 0 0 0";
+            let paragraphContainer = document.getElementById("paragraph-container");
+            paragraphContainer.style.margin = "0";
+            warningDisplay.innerHTML = "Your screen has a width of " + window.innerWidth + " pixel and a height of " + window.innerHeight + 
+            " pixel. It is advised to have a width of at least 1000 pixel and a height of 500 pixel. Otherwise the game might not work as intended";
         }
     </script>
 </body>
