@@ -103,7 +103,7 @@ const connections = {
 
 let playerConnected = 0;
 io.on('connection', (socket) => {
-  if(playerConnected < 250){
+  if(playerConnected < 100){
     playerConnected++;
     let intervalConditions = 0;
     let intervall;
