@@ -103,11 +103,11 @@ const connections = {
 
 let playerConnected = 0;
 io.on('connection', (socket) => {
-  if(playerConnected < 100){
+  if(playerConnected < 50){
     playerConnected++;
     let intervalConditions = 0;
     let intervall;
-    for(let i = 0; i<100; i++){
+    for(let i = 0; i<50; i++){
       for(let j = 0; j < 2; j++){
         if(connectArr.length > i){
           if(connectArr[i][j] == 0){
